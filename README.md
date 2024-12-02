@@ -132,7 +132,7 @@
     "name": "Squats",
     "repetitions": 12,
     "sets": 4,
-    "durationMins": 20
+    "durationMins": 20,
     "isAiSuggestion": false,
     "isCompleted": true
 }
