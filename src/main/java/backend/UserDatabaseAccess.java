@@ -27,7 +27,7 @@ public class UserDatabaseAccess {
                     ResultSet resultSet = statement.executeQuery();
 
                     if (resultSet.next()) {
-                        UserData user = new UserData(
+                        RegisteredUser user = new RegisteredUser(
                             resultSet.getInt("id"), // add 
                             resultSet.getString("email"),
                             resultSet.getString("hashedPassword"),
@@ -65,7 +65,7 @@ public class UserDatabaseAccess {
 
                 StringBuilder jsonResponse = new StringBuilder("[");
                 while (resultSet.next()) {
-                    UserData user = new UserData(
+                	RegisteredUser user = new RegisteredUser(
                         resultSet.getInt("id"), // need to fix the ID/USER Class
                         resultSet.getString("email"),
                         resultSet.getString("hashedPassword"),
