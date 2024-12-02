@@ -1,7 +1,6 @@
 package backend;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,11 +11,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
-import java.sql.Date;
+import com.google.gson.GsonBuilder;
+import java.util.Date;
 
 public class ExerciseDatabaseAccess {
     private static final ReentrantLock lock = new ReentrantLock();
-    private static final Gson gson = new Gson();
+    private static final Gson gson = new GsonBuilder()
+            .setDateFormat("yyyy-MM-dd") 
+            .create();
 
     public static void getExercisesByUserIdAndDate(int userId, String date, HttpServletResponse response) {
 	    lock.lock();
@@ -24,7 +26,7 @@ public class ExerciseDatabaseAccess {
 	        String query = "SELECT * FROM Exercise WHERE user_id = ? AND date = ?";
 	        try (PreparedStatement statement = connection.prepareStatement(query)) {
 	            statement.setInt(1, userId);
-	            statement.setDate(2, Date.valueOf(date)); // Convert string to SQL Date
+	            statement.setDate(2, java.sql.Date.valueOf(date)); // Convert string to SQL Date
 	            ResultSet resultSet = statement.executeQuery();
 	
 	            // Build JSON response
@@ -33,13 +35,14 @@ public class ExerciseDatabaseAccess {
 	                Exercise exercise = new Exercise(
 	                    resultSet.getInt("id"),
 	                    resultSet.getInt("user_id"),
-	                    resultSet.getDate("date"),
+	                    new Date(resultSet.getDate("date").getTime()),
 	                    resultSet.getString("name"),
 	                    resultSet.getInt("repetitions"),
 	                    resultSet.getInt("sets"),
 	                    resultSet.getInt("duration_mins"),
 	                    resultSet.getInt("is_ai_suggestion")
 	                );
+	                
 	                jsonResponse.append(gson.toJson(exercise)).append(",");
 	            }
 	            if (jsonResponse.length() > 1) {
@@ -80,13 +83,14 @@ public class ExerciseDatabaseAccess {
 	                Exercise exercise = new Exercise(
 	                    resultSet.getInt("id"),
 	                    resultSet.getInt("user_id"),
-	                    resultSet.getDate("date"),
+	                    new Date(resultSet.getDate("date").getTime()),
 	                    resultSet.getString("name"),
 	                    resultSet.getInt("repetitions"),
 	                    resultSet.getInt("sets"),
 	                    resultSet.getInt("duration_mins"),
 	                    resultSet.getInt("is_ai_suggestion")
 	                );
+	                
 	                jsonResponse.append(gson.toJson(exercise)).append(",");
 	            }
 	            if (jsonResponse.length() > 1) {
@@ -132,7 +136,7 @@ public class ExerciseDatabaseAccess {
             String query = "INSERT INTO Exercise (user_id, date, name, repetitions, sets, duration_mins, is_ai_suggestion) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setInt(1, newExercise.getUserId());
-                statement.setDate(2, newExercise.getDate());
+                statement.setDate(2, new java.sql.Date(newExercise.getDate().getTime()));
                 statement.setString(3, newExercise.getType());
                 statement.setInt(4, newExercise.getRepetitions());
                 statement.setInt(5, newExercise.getSets());

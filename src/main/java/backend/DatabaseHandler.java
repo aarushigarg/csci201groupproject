@@ -12,11 +12,24 @@ import java.util.List;
 public class DatabaseHandler {
 	private static final String URL = "jdbc:mysql://localhost/FitnessTracker";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = ""; // change to your password
+    private static final String PASSWORD = "rootPassword";
     
 	private Connection connection;
 	private Statement st;
 	private ResultSet rs;
+	
+	public static Connection getConnection() throws SQLException {
+		connectToDriver();
+		return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+	}
+	
+	public static void connectToDriver() {
+    	try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+    }
 
 	public DatabaseHandler() {
 		try {
@@ -27,12 +40,6 @@ public class DatabaseHandler {
 			System.out.println(e.getMessage());
 		}
 	}
-	
-	public static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-	}
-
-	
 	
 	
 //	public void saveUser(RegisteredUser user) {
