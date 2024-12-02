@@ -15,11 +15,6 @@
 3. API is now up at http://localhost:8080/projectBackend
 
 
-## API documentation
-> Base URL: `https://spring-demo-bc-ff2fb46a7e3b.herokuapp.com/api`
-> You can see the raw data by going to the `Base URL` + `Endpoint` if you want
-
-
 ## Users API
 
 ### Get All Users
