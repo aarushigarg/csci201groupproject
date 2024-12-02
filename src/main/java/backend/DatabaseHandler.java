@@ -54,7 +54,6 @@ public class DatabaseHandler {
 		try {
 			rs = st.executeQuery(query);
 			if (rs.next()) {
-	            String name = rs.getString("name");
 	            int age = rs.getInt("age");
 	            char gender = rs.getString("gender").charAt(0);
 	            int heightInches = rs.getInt("height_inches");
@@ -62,7 +61,7 @@ public class DatabaseHandler {
 	            String email = rs.getString("email");
 	            String hashedPassword = rs.getString("hashed_password");
 	            String goal = rs.getString("goal");
-	            user = new RegisteredUser(name, age, gender, heightInches, weightPounds, email, hashedPassword, goal);
+	            user = new RegisteredUser(age, gender, heightInches, weightPounds, email, hashedPassword, goal);
 			}
 			
 		} catch (SQLException e) {

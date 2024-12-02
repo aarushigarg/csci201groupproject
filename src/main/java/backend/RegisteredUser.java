@@ -10,8 +10,7 @@ public class RegisteredUser {
     private String hashedPassword;
     private String goal;
 
-    public RegisteredUser(String name, int age, char gender, int heightInches, int weightPounds, String email, String hashedPassword, String goal) {
-    	this.name = name;
+    public RegisteredUser(int age, char gender, int heightInches, int weightPounds, String email, String hashedPassword, String goal) {
         this.age = age;
         this.gender = gender;
         this.heightInches = heightInches;
@@ -20,14 +19,6 @@ public class RegisteredUser {
         this.hashedPassword = hashedPassword;
         this.goal = goal;
     }
-    
-    public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public int getAge() {
 		return age;

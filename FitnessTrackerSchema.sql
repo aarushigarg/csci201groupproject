@@ -5,7 +5,6 @@ USE FitnessTracker;
 
 CREATE TABLE Users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(128) NOT NULL,
     email VARCHAR(128) UNIQUE NOT NULL,
     hashed_password VARCHAR(64) NOT NULL,
     weight_pounds INT,
