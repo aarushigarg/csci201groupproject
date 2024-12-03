@@ -1,7 +1,7 @@
 package backend;
 
 public class RegisteredUser {
-	private String name;
+	private int id;
 	private int age;
 	private char gender;
 	private int heightInches;
@@ -10,8 +10,9 @@ public class RegisteredUser {
     private String hashedPassword;
     private String goal;
 
-    public RegisteredUser(int age, char gender, int heightInches, int weightPounds, String email, String hashedPassword, String goal) {
-        this.age = age;
+    public RegisteredUser(int id,int age, char gender, int heightInches, int weightPounds, String email, String hashedPassword, String goal) {
+        this.id = id; 
+    	this.age = age;
         this.gender = gender;
         this.heightInches = heightInches;
         this.weightPounds = weightPounds;
@@ -19,6 +20,19 @@ public class RegisteredUser {
         this.hashedPassword = hashedPassword;
         this.goal = goal;
     }
+    
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        if (id > 0) {
+            this.id = id;
+        } else {
+            throw new IllegalArgumentException("ID must be positive.");
+        }
+    }
+
 
 	public int getAge() {
 		return age;
