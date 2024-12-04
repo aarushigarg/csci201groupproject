@@ -7,14 +7,14 @@ public class RegisteredUser {
     private int heightInches;
     private int weightPounds;
     private String email;
-    private String hashedPassword;
+    private String hashed_password; // Updated to match the database schema
     private String goal;
 
     // Constructor with ID (used when reading from the database)
-    public RegisteredUser(int id, String email, String hashedPassword, int weightPounds, int heightInches, int age, String gender, String goal) {
+    public RegisteredUser(int id, String email, String hashed_password, int weightPounds, int heightInches, int age, String gender, String goal) {
         this.id = id;
         this.email = email;
-        this.hashedPassword = hashedPassword;
+        this.hashed_password = hashed_password;
         this.weightPounds = weightPounds;
         this.heightInches = heightInches;
         this.age = age;
@@ -23,9 +23,9 @@ public class RegisteredUser {
     }
 
     // Constructor without ID (used when creating a new user)
-    public RegisteredUser(String email, String hashedPassword, int weightPounds, int heightInches, int age, String gender, String goal) {
+    public RegisteredUser(String email, String hashed_password, int weightPounds, int heightInches, int age, String gender, String goal) {
         this.email = email;
-        this.hashedPassword = hashedPassword;
+        this.hashed_password = hashed_password;
         this.weightPounds = weightPounds;
         this.heightInches = heightInches;
         this.age = age;
@@ -82,12 +82,12 @@ public class RegisteredUser {
         this.email = email;
     }
 
-    public String getHashedPassword() {
-        return hashedPassword;
+    public String getHashed_password() { // Updated getter name
+        return hashed_password;
     }
 
-    public void setHashedPassword(String hashedPassword) {
-        this.hashedPassword = hashedPassword;
+    public void setHashed_password(String hashed_password) { // Updated setter name
+        this.hashed_password = hashed_password;
     }
 
     public String getGoal() {
@@ -107,7 +107,9 @@ public class RegisteredUser {
                 ", heightInches=" + heightInches +
                 ", weightPounds=" + weightPounds +
                 ", email='" + email + '\'' +
+                ", hashed_password='" + hashed_password + '\'' + // Updated field name
                 ", goal='" + goal + '\'' +
                 '}';
     }
 }
+
