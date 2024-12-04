@@ -60,16 +60,19 @@ public class DatabaseHandler {
 		String query = String.format("SELECT * FROM Users where id=%d", id);
 		try {
 			rs = st.executeQuery(query);
-			if (rs.next()) {
-	            int age = rs.getInt("age");
-	            char gender = rs.getString("gender").charAt(0);
-	            int heightInches = rs.getInt("height_inches");
-	            int weightPounds = rs.getInt("weight_pounds");
-	            String email = rs.getString("email");
-	            String hashedPassword = rs.getString("hashed_password");
-	            String goal = rs.getString("goal");
-	            user = new RegisteredUser(age, gender, heightInches, weightPounds, email, hashedPassword, goal);
-			}
+			 if (rs.next()) {
+		            int userId = rs.getInt("id");
+		            int age = rs.getInt("age");
+		            String gender = rs.getString("gender"); 
+		            int heightInches = rs.getInt("height_inches");
+		            int weightPounds = rs.getInt("weight_pounds");
+		            String email = rs.getString("email");
+		            String hashedPassword = rs.getString("hashed_password");
+		            String goal = rs.getString("goal");
+
+		            // Match the RegisteredUser constructor signature
+		            user = new RegisteredUser(userId, email, hashedPassword, weightPounds, heightInches, age, gender, goal);
+		        }
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
