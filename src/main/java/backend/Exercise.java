@@ -1,29 +1,31 @@
 package backend;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Exercise {
     private int id;
     private int userId;
-    private Date date;
-    private String name; 
+    private Date date; 
+    private String name;
     private int repetitions;
     private int sets;
     private int durationMins;
-    private Boolean isAISuggestion;
+    private Boolean isAiSuggestion;
+
     public Exercise() {}
-    public Exercise(int id, int userId, Date date, String name, int repetitions, int sets, int durationMins, int isAISuggestion) {
+
+    public Exercise(int id, int userId, Date date, String name, int repetitions, int sets, int durationMins, int isAiSuggestion) {
         this.id = id;
         this.userId = userId;
-        this.date = date;
+        this.date = date; 
         this.name = name;
         this.repetitions = repetitions;
         this.sets = sets;
         this.durationMins = durationMins;
-        if (isAISuggestion == 1)
-        	this.setIsAISuggestion(true);
+        if (isAiSuggestion == 1)
+            this.setIsAISuggestion(true);
         else
-        	this.setIsAISuggestion(false);
+            this.setIsAISuggestion(false);
     }
 
     public int getId() {
@@ -47,7 +49,7 @@ public class Exercise {
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.date = date; 
     }
 
     public String getType() {
@@ -82,11 +84,11 @@ public class Exercise {
         this.durationMins = durationMins;
     }
 
-	public Boolean getIsAISuggestion() {
-		return isAISuggestion;
-	}
+    public Boolean getIsAISuggestion() {
+        return isAiSuggestion;
+    }
 
-	public void setIsAISuggestion(Boolean isAISuggestion) {
-		this.isAISuggestion = isAISuggestion;
-	}
+    public void setIsAISuggestion(Boolean isAISuggestion) {
+        this.isAiSuggestion = isAISuggestion;
+    }
 }

@@ -12,11 +12,24 @@ import java.util.List;
 public class DatabaseHandler {
 	private static final String URL = "jdbc:mysql://localhost/FitnessTracker";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = ""; // change to your password
+    private static final String PASSWORD = "rootPassword";
     
 	private Connection connection;
 	private Statement st;
 	private ResultSet rs;
+	
+	public static Connection getConnection() throws SQLException {
+		connectToDriver();
+		return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+	}
+	
+	public static void connectToDriver() {
+    	try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+    }
 
 	public DatabaseHandler() {
 		try {
@@ -27,12 +40,6 @@ public class DatabaseHandler {
 			System.out.println(e.getMessage());
 		}
 	}
-	
-	public static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-	}
-
-	
 	
 	
 //	public void saveUser(RegisteredUser user) {
@@ -53,16 +60,19 @@ public class DatabaseHandler {
 		String query = String.format("SELECT * FROM Users where id=%d", id);
 		try {
 			rs = st.executeQuery(query);
-			if (rs.next()) {
-	            int age = rs.getInt("age");
-	            char gender = rs.getString("gender").charAt(0);
-	            int heightInches = rs.getInt("height_inches");
-	            int weightPounds = rs.getInt("weight_pounds");
-	            String email = rs.getString("email");
-	            String hashedPassword = rs.getString("hashed_password");
-	            String goal = rs.getString("goal");
-	            user = new RegisteredUser(age, gender, heightInches, weightPounds, email, hashedPassword, goal);
-			}
+			 if (rs.next()) {
+		            int userId = rs.getInt("id");
+		            int age = rs.getInt("age");
+		            String gender = rs.getString("gender"); 
+		            int heightInches = rs.getInt("height_inches");
+		            int weightPounds = rs.getInt("weight_pounds");
+		            String email = rs.getString("email");
+		            String hashedPassword = rs.getString("hashed_password");
+		            String goal = rs.getString("goal");
+
+		            // Match the RegisteredUser constructor signature
+		            user = new RegisteredUser(userId, email, hashedPassword, weightPounds, heightInches, age, gender, goal);
+		        }
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
