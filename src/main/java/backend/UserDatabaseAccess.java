@@ -116,7 +116,7 @@ public class UserDatabaseAccess {
             String query = "INSERT INTO users (email, hashed_password, weight_pounds, height_inches, age, gender, goal) VALUES (?, ?, ?, ?, ?, ?, ?)"; // Updated
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, newUser.getEmail());
-                statement.setString(2, newUser.getHashedPassword()); // Updated
+                statement.setString(2, newUser.getHashed_password()); // Updated
                 statement.setInt(3, newUser.getWeightPounds());      // Updated
                 statement.setInt(4, newUser.getHeightInches());      // Updated
                 statement.setInt(5, newUser.getAge());
@@ -160,7 +160,7 @@ public class UserDatabaseAccess {
             String query = "UPDATE users SET email = ?, hashed_password = ?, weight_pounds = ?, height_inches = ?, age = ?, gender = ?, goal = ? WHERE id = ?"; // Updated
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, updatedUser.getEmail());
-                statement.setString(2, updatedUser.getHashedPassword()); // Updated
+                statement.setString(2, updatedUser.getHashed_password()); // Updated
                 statement.setInt(3, updatedUser.getWeightPounds());      // Updated
                 statement.setInt(4, updatedUser.getHeightInches());      // Updated
                 statement.setInt(5, updatedUser.getAge());
@@ -187,4 +187,37 @@ public class UserDatabaseAccess {
             e.printStackTrace();
         }
     }
+    public static void deleteUser(HttpServletRequest request, HttpServletResponse response) {
+        try (Connection connection = DatabaseHandler.getConnection()) {
+            String pathInfo = request.getPathInfo();
+            if (pathInfo == null || pathInfo.split("/").length != 2) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().println("Invalid URL format. Expected /{id}");
+                return;
+            }
+
+            int userId = Integer.parseInt(pathInfo.split("/")[1]);
+            String query = "DELETE FROM users WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, userId);
+
+                int rowsDeleted = statement.executeUpdate();
+                if (rowsDeleted > 0) {
+                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.getWriter().println("User not found.");
+                }
+            }
+        } catch (SQLException | IOException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            try {
+                response.getWriter().println("Error deleting user: " + e.getMessage());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+    }
 }
+
