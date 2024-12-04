@@ -73,6 +73,16 @@ public class UserData {
         this.goal = goal;
         this.currDate = Date.valueOf(LocalDate.now());
     }
+    
+    public UserData(List<Exercise> exercises, int age, char gender, int height, int weight, String goal, Date currDate) {
+        this.exercises = exercises;
+        this.age = age;
+        this.gender = String.valueOf(gender);
+        this.height = height;
+        this.weight = weight;
+        this.goal = goal;
+        this.currDate = currDate;
+    }
 
     // Getters and setters
     public List<Exercise> getExercises() {
