@@ -1,8 +1,6 @@
 package backend;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,9 +17,13 @@ public class ServletUsers extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        try (PrintWriter out = response.getWriter()) {
+        try {
             // Fetch all users
-            UserDatabaseAccess.getAllUsers(out);
+            UserDatabaseAccess.getAllUsers(response);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("{\"error\": \"An error occurred while retrieving users.\"}");
+            e.printStackTrace();
         }
     }
 
@@ -30,9 +32,13 @@ public class ServletUsers extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        try (BufferedReader in = request.getReader(); PrintWriter out = response.getWriter()) {
+        try {
             // Create a new user
-            UserDatabaseAccess.createUser(in, out);
+            UserDatabaseAccess.createUser(request, response);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("{\"error\": \"An error occurred while creating the user.\"}");
+            e.printStackTrace();
         }
     }
 }

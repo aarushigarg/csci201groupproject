@@ -1,8 +1,6 @@
 package backend;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,10 +17,13 @@ public class ServletUsersId extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String uri = request.getRequestURI();
-        try (PrintWriter out = response.getWriter()) {
+        try {
             // Fetch user by ID
-            UserDatabaseAccess.getUserById(uri, out);
+            UserDatabaseAccess.getUserById(request, response);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("{\"error\": \"An error occurred while retrieving the user.\"}");
+            e.printStackTrace();
         }
     }
 
@@ -31,10 +32,13 @@ public class ServletUsersId extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String uri = request.getRequestURI();
-        try (BufferedReader in = request.getReader(); PrintWriter out = response.getWriter()) {
+        try {
             // Update user by ID
-            UserDatabaseAccess.updateUser(uri, in, out);
+            UserDatabaseAccess.updateUser(request, response);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("{\"error\": \"An error occurred while updating the user.\"}");
+            e.printStackTrace();
         }
     }
 
@@ -43,14 +47,14 @@ public class ServletUsersId extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String uri = request.getRequestURI();
-        try (PrintWriter out = response.getWriter()) {
+        try {
             // Delete user by ID
-            UserDatabaseAccess.deleteUser(uri, out);
+            UserDatabaseAccess.deleteUser(request, response);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("{\"error\": \"An error occurred\"}");
+            e.printStackTrace();
         }
     }
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> 5340ce46c78dfd7b770022c883476470d33047ca

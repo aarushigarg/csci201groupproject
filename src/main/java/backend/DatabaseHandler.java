@@ -63,7 +63,7 @@ public class DatabaseHandler {
 			 if (rs.next()) {
 		            int userId = rs.getInt("id");
 		            int age = rs.getInt("age");
-		            String gender = rs.getString("gender"); 
+		            char gender = rs.getString("gender").charAt(0);; 
 		            int heightInches = rs.getInt("height_inches");
 		            int weightPounds = rs.getInt("weight_pounds");
 		            String email = rs.getString("email");
