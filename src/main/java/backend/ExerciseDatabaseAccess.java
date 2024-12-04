@@ -15,13 +15,11 @@ import com.google.gson.GsonBuilder;
 import java.util.Date;
 
 public class ExerciseDatabaseAccess {
-    private static final ReentrantLock lock = new ReentrantLock();
     private static final Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd") 
             .create();
 
     public static void getExercisesByUserIdAndDate(int userId, String date, HttpServletResponse response) {
-	    lock.lock();
 	    try (Connection connection = DatabaseHandler.getConnection()) {
 	        String query = "SELECT * FROM Exercise WHERE user_id = ? AND date = ?";
 	        try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -64,13 +62,10 @@ public class ExerciseDatabaseAccess {
 	            ex.printStackTrace();
 	        }
 	        e.printStackTrace();
-	    } finally {
-	        lock.unlock();
-	    }
+	    } 
 	}
 
     public static void getExercisesByUserId(int userId, HttpServletResponse response) {
-	    lock.lock();
 	    try (Connection connection = DatabaseHandler.getConnection()) {
 	        String query = "SELECT * FROM Exercise WHERE user_id = ?";
 	        try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -112,13 +107,10 @@ public class ExerciseDatabaseAccess {
 	            ex.printStackTrace();
 	        }
 	        e.printStackTrace();
-	    } finally {
-	        lock.unlock();
-	    }
+	    } 
 	}
 
     public static void createExercise(HttpServletRequest request, HttpServletResponse response) {
-        lock.lock();
         try (Connection connection = DatabaseHandler.getConnection()) {
             // Read the JSON request body
             StringBuilder requestBody = new StringBuilder();
@@ -159,13 +151,10 @@ public class ExerciseDatabaseAccess {
                 ex.printStackTrace();
             }
             e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
+        } 
     }
 
     public static void updateExercise(HttpServletRequest request, HttpServletResponse response) {
-	    lock.lock();
 	    try (Connection connection = DatabaseHandler.getConnection()) {
 	        // Extract exercise ID from the URI
 	        String pathInfo = request.getPathInfo(); // e.g., /1
@@ -215,13 +204,10 @@ public class ExerciseDatabaseAccess {
 				ioe.printStackTrace();
 			}
 	        e.printStackTrace();
-	    } finally {
-	        lock.unlock();
-	    }
+	    } 
     }
 
     public static void deleteExercise(HttpServletRequest request, HttpServletResponse response) {
-	    lock.lock();
 	    try (Connection connection = DatabaseHandler.getConnection()) {
 	        // Extract exercise ID from the URI
 	        String pathInfo = request.getPathInfo(); // e.g., /1
@@ -254,8 +240,6 @@ public class ExerciseDatabaseAccess {
 				ioe.printStackTrace();
 			}
 	        e.printStackTrace();
-	    } finally {
-	        lock.unlock();
-	    }
+	    } 
     }
 }
