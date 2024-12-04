@@ -57,11 +57,4 @@ public class ServletUsersId extends HttpServlet {
         }
     }
 }
-<<<<<<< HEAD
 
-=======
-//<<<<<<< HEAD
-//
-//=======
-//>>>>>>> 5340ce46c78dfd7b770022c883476470d33047ca
->>>>>>> branch 'main' of git@github.com:aarushigarg/csci201groupproject.git
