@@ -35,9 +35,9 @@ public class UserDatabaseAccess {
                     RegisteredUser user = new RegisteredUser(
                         resultSet.getInt("id"),
                         resultSet.getString("email"),
-                        resultSet.getString("hashedPassword"),
-                        resultSet.getInt("weightPounds"),
-                        resultSet.getInt("heightInches"),
+                        resultSet.getString("hashed_password"), // Updated
+                        resultSet.getInt("weight_pounds"),     // Updated
+                        resultSet.getInt("height_inches"),     // Updated
                         resultSet.getInt("age"),
                         resultSet.getString("gender"),
                         resultSet.getString("goal")
@@ -73,9 +73,9 @@ public class UserDatabaseAccess {
                     RegisteredUser user = new RegisteredUser(
                         resultSet.getInt("id"),
                         resultSet.getString("email"),
-                        resultSet.getString("hashedPassword"),
-                        resultSet.getInt("weightPounds"),
-                        resultSet.getInt("heightInches"),
+                        resultSet.getString("hashed_password"), // Updated
+                        resultSet.getInt("weight_pounds"),     // Updated
+                        resultSet.getInt("height_inches"),     // Updated
                         resultSet.getInt("age"),
                         resultSet.getString("gender"),
                         resultSet.getString("goal")
@@ -113,12 +113,12 @@ public class UserDatabaseAccess {
             }
 
             RegisteredUser newUser = gson.fromJson(requestBody.toString(), RegisteredUser.class);
-            String query = "INSERT INTO users (email, hashedPassword, weightPounds, heightInches, age, gender, goal) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO users (email, hashed_password, weight_pounds, height_inches, age, gender, goal) VALUES (?, ?, ?, ?, ?, ?, ?)"; // Updated
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, newUser.getEmail());
-                statement.setString(2, newUser.getHashedPassword());
-                statement.setInt(3, newUser.getWeightPounds());
-                statement.setInt(4, newUser.getHeightInches());
+                statement.setString(2, newUser.getHashedPassword()); // Updated
+                statement.setInt(3, newUser.getWeightPounds());      // Updated
+                statement.setInt(4, newUser.getHeightInches());      // Updated
                 statement.setInt(5, newUser.getAge());
                 statement.setString(6, newUser.getGender());
                 statement.setString(7, newUser.getGoal());
@@ -157,12 +157,12 @@ public class UserDatabaseAccess {
             }
 
             RegisteredUser updatedUser = gson.fromJson(requestBody.toString(), RegisteredUser.class);
-            String query = "UPDATE users SET email = ?, hashedPassword = ?, weightPounds = ?, heightInches = ?, age = ?, gender = ?, goal = ? WHERE id = ?";
+            String query = "UPDATE users SET email = ?, hashed_password = ?, weight_pounds = ?, height_inches = ?, age = ?, gender = ?, goal = ? WHERE id = ?"; // Updated
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, updatedUser.getEmail());
-                statement.setString(2, updatedUser.getHashedPassword());
-                statement.setInt(3, updatedUser.getWeightPounds());
-                statement.setInt(4, updatedUser.getHeightInches());
+                statement.setString(2, updatedUser.getHashedPassword()); // Updated
+                statement.setInt(3, updatedUser.getWeightPounds());      // Updated
+                statement.setInt(4, updatedUser.getHeightInches());      // Updated
                 statement.setInt(5, updatedUser.getAge());
                 statement.setString(6, updatedUser.getGender());
                 statement.setString(7, updatedUser.getGoal());
@@ -181,39 +181,6 @@ public class UserDatabaseAccess {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             try {
                 response.getWriter().println("Error updating user: " + e.getMessage());
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
-        }
-    }
-
-    public static void deleteUser(HttpServletRequest request, HttpServletResponse response) {
-        try (Connection connection = DatabaseHandler.getConnection()) {
-            String pathInfo = request.getPathInfo();
-            if (pathInfo == null || pathInfo.split("/").length != 2) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().println("Invalid URL format. Expected /{id}");
-                return;
-            }
-
-            int userId = Integer.parseInt(pathInfo.split("/")[1]);
-            String query = "DELETE FROM users WHERE id = ?";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, userId);
-
-                int rowsDeleted = statement.executeUpdate();
-                if (rowsDeleted > 0) {
-                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    response.getWriter().println("User not found.");
-                }
-            }
-        } catch (SQLException | IOException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            try {
-                response.getWriter().println("Error deleting user: " + e.getMessage());
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
