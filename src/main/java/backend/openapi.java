@@ -57,7 +57,7 @@ public class openapi {
                     List<Exercise> exlist = db.getExercisesByUserIdPreviousWeek(userId, Date.valueOf(LocalDate.now()));
                     RegisteredUser u = db.getUserById(userId);
                     int age = u.getAge();
-                    char gender = u.getGender();
+                    char gender = u.getGender().toCharArray()[0];
                     int height = u.getHeightInches();
                     int weight = u.getWeightPounds();
                     String goal = u.getGoal();
