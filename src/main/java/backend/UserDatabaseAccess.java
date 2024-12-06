@@ -39,7 +39,7 @@ public class UserDatabaseAccess {
                         resultSet.getInt("weight_pounds"),     // Updated
                         resultSet.getInt("height_inches"),     // Updated
                         resultSet.getInt("age"),
-                        resultSet.getString("gender"),
+                        resultSet.getString("gender").charAt(0),
                         resultSet.getString("goal")
                     );
 
@@ -77,7 +77,7 @@ public class UserDatabaseAccess {
                         resultSet.getInt("weight_pounds"),     // Updated
                         resultSet.getInt("height_inches"),     // Updated
                         resultSet.getInt("age"),
-                        resultSet.getString("gender"),
+                        resultSet.getString("gender").charAt(0),
                         resultSet.getString("goal")
                     );
                     jsonResponse.append(gson.toJson(user)).append(",");
@@ -113,14 +113,22 @@ public class UserDatabaseAccess {
             }
 
             RegisteredUser newUser = gson.fromJson(requestBody.toString(), RegisteredUser.class);
-            String query = "INSERT INTO users (email, hashed_password, weight_pounds, height_inches, age, gender, goal) VALUES (?, ?, ?, ?, ?, ?, ?)"; // Updated
+
+            // Validate gender
+            if (!isValidGender(newUser.getGender())) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().println("Invalid gender value. Allowed values: M, F, O.");
+                return;
+            }
+
+            String query = "INSERT INTO users (email, hashed_password, weight_pounds, height_inches, age, gender, goal) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, newUser.getEmail());
-                statement.setString(2, newUser.getHashed_password()); // Updated
-                statement.setInt(3, newUser.getWeightPounds());      // Updated
-                statement.setInt(4, newUser.getHeightInches());      // Updated
+                statement.setString(2, newUser.getHashed_password());
+                statement.setInt(3, newUser.getWeightPounds());
+                statement.setInt(4, newUser.getHeightInches());
                 statement.setInt(5, newUser.getAge());
-                statement.setString(6, newUser.getGender());
+                statement.setString(6, String.valueOf(newUser.getGender())); // Convert char to String for SQL
                 statement.setString(7, newUser.getGoal());
                 statement.executeUpdate();
 
@@ -128,13 +136,7 @@ public class UserDatabaseAccess {
                 response.getWriter().println("User created successfully.");
             }
         } catch (SQLException | IOException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            try {
-                response.getWriter().println("Error creating user: " + e.getMessage());
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
+            handleException(response, "Error creating user", e);
         }
     }
 
@@ -157,6 +159,13 @@ public class UserDatabaseAccess {
             }
 
             RegisteredUser updatedUser = gson.fromJson(requestBody.toString(), RegisteredUser.class);
+            
+            if (!isValidGender(updatedUser.getGender())) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().println("Invalid gender value. Allowed values: M, F, O.");
+                return;
+            }
+            
             String query = "UPDATE users SET email = ?, hashed_password = ?, weight_pounds = ?, height_inches = ?, age = ?, gender = ?, goal = ? WHERE id = ?"; // Updated
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, updatedUser.getEmail());
@@ -164,7 +173,7 @@ public class UserDatabaseAccess {
                 statement.setInt(3, updatedUser.getWeightPounds());      // Updated
                 statement.setInt(4, updatedUser.getHeightInches());      // Updated
                 statement.setInt(5, updatedUser.getAge());
-                statement.setString(6, updatedUser.getGender());
+                statement.setString(6, String.valueOf(updatedUser.getGender()));
                 statement.setString(7, updatedUser.getGoal());
                 statement.setInt(8, userId);
 
@@ -218,6 +227,11 @@ public class UserDatabaseAccess {
             }
             e.printStackTrace();
         }
+    }
+    
+    
+    private static boolean isValidGender(char gender) {
+        return gender == 'M' || gender == 'F' || gender == 'O';
     }
 }
 
