@@ -3,7 +3,7 @@ package backend;
 public class RegisteredUser {
     private int id; // Unique identifier
     private int age;
-    private String gender; // Changed to String for compatibility
+    private char gender; // Changed to String for compatibility
     private int heightInches;
     private int weightPounds;
     private String email;
@@ -11,7 +11,7 @@ public class RegisteredUser {
     private String goal;
 
     // Constructor with ID (used when reading from the database)
-    public RegisteredUser(int id, String email, String hashed_password, int weightPounds, int heightInches, int age, String gender, String goal) {
+    public RegisteredUser(int id, String email, String hashed_password, int weightPounds, int heightInches, int age, char gender, String goal) {
         this.id = id;
         this.email = email;
         this.hashed_password = hashed_password;
@@ -23,7 +23,7 @@ public class RegisteredUser {
     }
 
     // Constructor without ID (used when creating a new user)
-    public RegisteredUser(String email, String hashed_password, int weightPounds, int heightInches, int age, String gender, String goal) {
+    public RegisteredUser(String email, String hashed_password, int weightPounds, int heightInches, int age, char gender, String goal) {
         this.email = email;
         this.hashed_password = hashed_password;
         this.weightPounds = weightPounds;
@@ -50,11 +50,11 @@ public class RegisteredUser {
         this.age = age;
     }
 
-    public String getGender() {
+    public char getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(char gender) {
         this.gender = gender;
     }
 
@@ -103,7 +103,7 @@ public class RegisteredUser {
         return "RegisteredUser{" +
                 "id=" + id +
                 ", age=" + age +
-                ", gender='" + gender + '\'' +
+                ", gender=" + gender + 
                 ", heightInches=" + heightInches +
                 ", weightPounds=" + weightPounds +
                 ", email='" + email + '\'' +
