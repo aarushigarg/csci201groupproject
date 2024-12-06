@@ -233,5 +233,14 @@ public class UserDatabaseAccess {
     private static boolean isValidGender(char gender) {
         return gender == 'M' || gender == 'F' || gender == 'O';
     }
+    private static void handleException(HttpServletResponse response, String message, Exception e) {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        try {
+            response.getWriter().println(message + ": " + e.getMessage());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        e.printStackTrace();
+    }
 }
 
