@@ -11,15 +11,16 @@ import java.util.List;
 import java.time.LocalDate;
 import java.text.SimpleDateFormat;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class openapi {
-	private static DatabaseHandler db;
+    private static DatabaseHandler db;
 
     public openapi() throws Exception {
-    	db = new DatabaseHandler();
+        db = new DatabaseHandler();
         // create an HTTP server listening on port 7273
         HttpServer server = HttpServer.create(new java.net.InetSocketAddress(7273), 0);
         server.createContext("/listen", new RequestHandler());
@@ -31,6 +32,22 @@ public class openapi {
     static class RequestHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            Headers headers = exchange.getResponseHeaders();
+            // Allow all origins (for development purposes). Replace "*" with specific origins in production.
+            headers.add("Access-Control-Allow-Origin", "*");
+            // Specify allowed methods
+            headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            // Specify allowed headers
+            headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            // Set how long the results of a preflight request can be cached
+            headers.add("Access-Control-Max-Age", "86400"); // 24 hours
+
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                // Respond to preflight request
+                exchange.sendResponseHeaders(204, -1); // No Content
+                return;
+            }
+
             if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
                 InputStream inputStream = exchange.getRequestBody();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -44,7 +61,9 @@ public class openapi {
                 try {
                     // parse the user ID from the request body
                     Gson gson = new Gson();
-                    int userId = gson.fromJson(requestBody.toString(), int.class);
+                    // Expecting a JSON object like {"userId": 1}
+                    UserIdRequest userIdRequest = gson.fromJson(requestBody.toString(), UserIdRequest.class);
+                    int userId = userIdRequest.getUserId();
                     System.out.println("Received user ID: " + userId);
 
                     // create an example request to the backend
@@ -65,42 +84,48 @@ public class openapi {
 
                     // create UserData object
                     UserData userData = new UserData(
-                    		exlist,
-                    		age,
-                    		gender,
-                    		height,
-                    		weight,
-                    		goal,
-                    		currDate
-                    	);
+                            exlist,
+                            age,
+                            gender,
+                            height,
+                            weight,
+                            goal,
+                            currDate
+                    );
                     // convert to JSON and send to Python
                     String jsonInput = gson.toJson(userData);
-                    System.out.println(jsonInput);
+                    System.out.println("Sending to Flask server: " + jsonInput);
                     try (OutputStream os = conn.getOutputStream()) {
                         os.write(jsonInput.getBytes());
                         os.flush();
                     }
 
                     // read the response from backend
-                    String responseStr = "";
+                    StringBuilder responseStrBuilder = new StringBuilder();
                     try (BufferedReader backendReader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                         String backendLine;
                         while ((backendLine = backendReader.readLine()) != null) {
-                            responseStr += backendLine;
+                            responseStrBuilder.append(backendLine);
                         }
                     }
 
                     // parse and respond with the backend response
-                    WorkoutRecommendation response = gson.fromJson(responseStr, WorkoutRecommendation.class);
+                    WorkoutRecommendation response = gson.fromJson(responseStrBuilder.toString(), WorkoutRecommendation.class);
                     String responseBody = gson.toJson(response.getWorkoutRec());
                     List<BaseExercise> recexercises = response.getWorkoutRec();
-                    for(int i = 0; i < recexercises.size(); ++i) {
-                    	BaseExercise x = recexercises.get(i);
-                    	db.addAIExercise(userId, Date.valueOf(x.getDate()), x.getName(), x.getRepetitions(), x.getSets(), x.getDurationMins());
+                    for (BaseExercise x : recexercises) {
+                        db.addAIExercise(userId, Date.valueOf(x.getDate()), x.getName(), x.getRepetitions(), x.getSets(), x.getDurationMins());
                     }
-                    System.out.println(responseBody);
+                    System.out.println("Received from Flask server: " + responseBody);
+
+                    // Respond to the client with the generated workouts
+                    exchange.sendResponseHeaders(200, responseBody.getBytes().length);
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(responseBody.getBytes());
+                    os.close();
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     // error handling
                     String errorResponse = "Error processing the request: " + e.getMessage();
                     exchange.sendResponseHeaders(500, errorResponse.getBytes().length);
@@ -109,11 +134,27 @@ public class openapi {
                     os.close();
                 }
             } else {
-                // if method is not POST, respond with 405
+                // if method is not POST, respond with 405 Method Not Allowed
                 exchange.sendResponseHeaders(405, -1);
             }
         }
     }
+
+    // Helper class to parse userId from JSON
+    static class UserIdRequest {
+        private int userId;
+
+        public int getUserId() {
+            return userId;
+        }
+
+        public void setUserId(int userId) {
+            this.userId = userId;
+        }
+    }
+
+    // Define your other classes like Exercise, UserData, WorkoutRecommendation, BaseExercise, RegisteredUser here
+    // Ensure they have the necessary getters and setters for Gson to parse them correctly
 
     public static void main(String[] args) throws Exception {
         new openapi(); // initialize the server

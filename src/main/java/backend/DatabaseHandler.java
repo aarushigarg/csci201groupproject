@@ -15,7 +15,7 @@ import java.util.List;
 public class DatabaseHandler {  // make this a thread
 	private static final String URL = "jdbc:mysql://localhost/FitnessTracker";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = "rootPassword";
+    private static final String PASSWORD = "Venividivici49";
     
 	private Connection connection;
 	private Statement st;
@@ -38,7 +38,7 @@ public class DatabaseHandler {  // make this a thread
 
 	public DatabaseHandler() {
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/FitnessTracker?user=root");  
+			connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);  
 			st = connection.createStatement();
 		}
 		catch (SQLException e) {
