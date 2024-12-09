@@ -1,4 +1,22 @@
+
+
+
+
+
+
+
 # How to use backend API
+## Setting up Database Password
+1. Go to DatabaseHandler.java and change PASSWORD to your SQLWorkbench Password
+
+## Setting up the OpenAI API
+1. Install Pip per the documentation at https://pip.pypa.io/en/stable/installation/
+2. Install the Flask and openai libraries using "pip install flask" and "pip install openai" respectively
+3. 
+    a. Mac:  In the terminal, run the following: 'export OPENAI_API_KEY="your_api_key_here"' >> ~/.zshrc
+    b. Windows: In the terminal, run the following:setx OPENAI_API_KEY "your_api_key_here"; set OPENAI_API_KEY=your_api_key_here
+4. Make sure to replace your_api_key with your OpenAI API Key.
+
 ## Connect to server for first time
 *This assumes you have tomcat set up on Eclipse*
 1. Open the project on eclipse
@@ -10,6 +28,8 @@
 
 
 ## Run the API on the server
+1. Run openapi.py.
+2. Run openapi.java as a java project. 
 1. Right click on the project name
 2. Select **Run as** -> **Run on server**
 3. API is now up at http://localhost:8080/projectBackend
